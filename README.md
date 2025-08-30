@@ -72,6 +72,7 @@ generate_topic_consumers_report writes a CSV to ~/Downloads by default (or a pro
 3. Consumer Groups List (semicolon separated)
 
 ## Demo
+![output1](https://github.com/user-attachments/assets/5af40240-de48-4fa4-867f-2547da28880a)
 
 
 ## Retention & Disk Notes
