@@ -39,6 +39,59 @@ If the IDE still shows Python 3.9 after activating 3.10:
 - Apply & reindex.  
 Terminal activation does not automatically update the IDE interpreter.
 
+## Claude Desktop Setup
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "kafka": {
+      "command": "/absolute/path/to/kafka-mcp-python/.venv/bin/python",
+      "args": ["/absolute/path/to/kafka-mcp-python/server.py"],
+      "env": {
+        "KAFKA_BOOTSTRAP_SERVERS": "host1:9092,host2:9092"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop after saving.
+
+## Claude Code Setup
+
+**Important:** Claude Code does **not** read MCP config from `~/.claude/settings.json`. Use the `claude mcp add` CLI command instead.
+
+1. Create a virtualenv with Python 3.10+ and install dependencies:
+   ```bash
+   python3.12 -m venv .venv
+   .venv/bin/pip install -r requirements.txt
+   ```
+
+2. Add the MCP server (use the full virtualenv Python path, not bare `python`):
+   ```bash
+   claude mcp add kafka -- /absolute/path/to/kafka-mcp-python/.venv/bin/python /absolute/path/to/kafka-mcp-python/server.py
+   ```
+
+3. Add the environment variable. The `-e` flag in `claude mcp add` may not work reliably, so edit `~/.claude.json` directly. Find the `mcpServers.kafka` entry under your project and set:
+   ```json
+   "env": {
+     "KAFKA_BOOTSTRAP_SERVERS": "host1:9092,host2:9092"
+   }
+   ```
+
+4. Verify the server is connected:
+   ```bash
+   claude mcp get kafka
+   ```
+   You should see `Status: ✓ Connected`. If it shows `Failed to connect`, check that:
+   - The Python path points to a virtualenv with `mcp` and `kafka-python` installed
+   - Your Python version is 3.10+ (`mcp` does not support 3.9 or below)
+   - The Kafka bootstrap server is reachable from your machine
+
+5. Restart Claude Code for the MCP tools to become available in your conversation.
+
 ## Environment Variables
 Set before starting MCP server (Claude/other client):
 ```
