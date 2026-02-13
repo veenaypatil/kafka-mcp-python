@@ -1,0 +1,3 @@
+mcp
+kafka-python
+aiohttp
